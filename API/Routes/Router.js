@@ -1,5 +1,12 @@
-import express from "express";
-import {signupHandler , loginHandler} from "../Controllers/signup_login.js";
+const express = require("express");
+const { signupHandler, loginHandler } = require("../Controllers/signup_login");
+const { authHandler } = require("../middleware/auth");
+const { uploadResume , discHandler} = require("../Controllers/upload_resume");
+const { promptGeneration } = require("../Controllers/resume_generate");
+const { pdfGeneratorFromHtml } = require("../Controllers/pdf_generator_from_html");
+const multer = require("multer");
+
+const upload = multer({ dest: 'Resources/' }); // uploads will be saved to /Resource/
 const router = express.Router();
 
 async function temp(req, res) {
@@ -8,15 +15,16 @@ async function temp(req, res) {
     res.send("Hello world, this route is currently working");
 }
 
-// Temporary test route
 router.route("/")
   .get(temp)
   .post(temp);
 
-// Signup route (should only use POST for creating user)
 router.post('/signup', signupHandler);
-
-// Placeholder login handler
 router.post('/login', loginHandler);
+router.get('/dashboard', authHandler, temp);
+router.post('/upload', upload.single('file'), uploadResume);
+router.route('/jobD').post(discHandler);
+router.route('/result').get(promptGeneration);
+router.route('/pdf').get(pdfGeneratorFromHtml);
 
-export default router;
+module.exports = router;
