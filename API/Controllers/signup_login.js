@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+const { PrismaClient } = require("@prisma/client");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const db = new PrismaClient();
 
@@ -29,7 +29,7 @@ const generateToken = (userId) => {
   }
 };
 
-export const signupHandler = async (req, res) => {
+const signupHandler = async (req, res) => {
   console.log(req.body);
   try {
     const { nameUser, passwordUser, mailUser } = req.body;
@@ -65,7 +65,7 @@ export const signupHandler = async (req, res) => {
   }
 };
 
-export const loginHandler = async (req, res) => {
+const loginHandler = async (req, res) => {
   try {
     const { mailUser, passwordUser } = req.body;
 
@@ -96,4 +96,7 @@ export const loginHandler = async (req, res) => {
 };
 
 
-
+module.exports = {
+      signupHandler,
+      loginHandler
+}
