@@ -1,0 +1,21 @@
+.compact-card {
+  padding: 12px 16px !important;
+}
+
+.compact-card select {
+  font-size: 0.85rem;
+  padding: 4px 8px;
+}
+
+.application-card {
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-bar{
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    color: #333;
+    font-size: 0.85rem;
+    width: 100px;
+}
