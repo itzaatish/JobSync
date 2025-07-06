@@ -1,0 +1,72 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 10px auto;
+  max-width: 800px;
+  background: #fff;
+  color: #222;
+}
+
+h1,h2,h3 {
+  margin: 0.5em 0 0.3em;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.4em;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 4px;
+  margin-top: 1.5em;
+}
+
+h3 {
+  font-size: 1.1em;
+  margin-bottom: 0.2em;
+}
+
+ul {
+  margin: 0.4em 0 1em;
+  padding-left: 1.4em;
+}
+
+li {
+  margin-bottom: 0.3em;
+}
+
+.entry {
+  margin-bottom: 1.2em;
+}
+
+.edu-degree,
+.exp-role,
+.project-name,
+.certi-name {
+  font-weight: bold;
+}
+
+.edu-inst,
+.exp-company {
+  font-style: italic;
+}
+
+.edu-date,
+.exp-date,
+.project-date {
+  float: right;
+  color: #666;
+  font-size: 0.95em;
+}
+
+a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+#resume-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}

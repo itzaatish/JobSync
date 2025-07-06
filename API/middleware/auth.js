@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const authHandler = (req, res, next) => {
     const head = req.headers.authorization;
-    console.log("Auth header:", head);
+    // console.log("Auth header:", head);
 
     if (!head || !head.toLowerCase().startsWith("bearer ")) {
         return res.status(401).send("Authorization Failed");
@@ -16,7 +16,7 @@ const authHandler = (req, res, next) => {
     } catch (error) {
         console.log("Authentication failed: " + error);
         res.status(401).json({
-            message: "Token not accepted, failed authorization"
+            error: "Token not accepted, failed authorization"
         });
     }
 };
