@@ -12,6 +12,7 @@ const ResumeUploader = () => {
   const [status, setStatus] = useState('');
   const { setLoading } = useContext(LoadingContext);
   const { setBannerMessage, setBannerType, setBanner , resetBanner} = useContext(BannerContext);
+  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -34,7 +35,7 @@ const ResumeUploader = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:2000/upload', formData, {
+      const response = await axios.post(`${BaseURL}/upload`, formData, {
         responseType: 'blob',
         headers: { 'Content-Type': 'multipart/form-data' ,
                     'Authorization': `Bearer ${localStorage.getItem('token')}` // Include token for authentication

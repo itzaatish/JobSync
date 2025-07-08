@@ -16,7 +16,8 @@ const statusColors = {
 const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
   const { company_name, job_title, status, application_date, application_id } = application;
   const {setBannerMessage , setBannerType , setBanner , setConfirmAction } = useContext(BannerContext);
-  
+  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
+
   const handleDeleteConfimation = () => {
     setBannerMessage("Are you sure you want to delete this application?");
     setBannerType("confirm");
@@ -27,7 +28,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.delete(`http://localhost:2000/applications/${application_id}`, {
+      const res = await axios.delete(`${BaseURL}/applications/${application_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -56,7 +57,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
       const token = localStorage.getItem("token");
 
       const res = await axios.patch(
-        `http://localhost:2000/applications/${application_id}`,
+        `${BaseURL}/applications/${application_id}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

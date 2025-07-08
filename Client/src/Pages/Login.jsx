@@ -16,6 +16,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +46,7 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:2000/login", payload);
+      const response = await axios.post(`${BaseURL}/login`, payload);
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       getData(user.user_id, user.name, user.mail_id);

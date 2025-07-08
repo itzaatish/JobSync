@@ -19,6 +19,7 @@ const CreateApplication = () => {
   const { setLoading } = useContext(LoadingContext);
   const [statusMessage, setStatusMessage] = useState('');
   const {setBanner , setBannerMessage , setBannerType , resetBanner} = useContext(BannerContext)
+  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,7 +52,7 @@ const CreateApplication = () => {
       setBanner(true);
       const token = localStorage.getItem('token');
       console.log(token);
-      const response = await axios.post('http://localhost:2000/create_application', formData, {
+      const response = await axios.post(`${BaseURL}/create_application`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -19,12 +19,14 @@ const ApplicationsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Newest");
   const { setLoading } = useContext(LoadingContext);
+  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
+
   const fetchApplications = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:2000/get_applications",
+        `${BaseURL}/get_applications`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

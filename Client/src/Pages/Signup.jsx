@@ -14,9 +14,9 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-
-    const { getData } = useContext(UserContext);
-    const { setLoading } = useContext(LoadingContext);
+  const BaseURL = process.meta.env.REACT_APP_BASE_URL; 
+  const { getData } = useContext(UserContext);
+  const { setLoading } = useContext(LoadingContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault(); 
@@ -48,18 +48,18 @@ const Signup = () => {
 
         try {
             setLoading(true);
-            const response = await axios.post("http://localhost:2000/signup", payload);
+            const response = await axios.post(`${BaseURL}/signup`, payload);
             console.log("Signup success:", response.data);
         
             localStorage.setItem("token", response.data.token);
             const { user_id, name, mail_id } = response.data.user;
             getData(user_id, name, mail_id); 
             navigate("/dashboard");
-            return;
+            return ; 
 
         } catch (err) {
             console.error("Signup error:", err.response?.data || err.message);
-            setError("Signup failed. Try again.");
+            setError("Signup failed. Try again.") ;
         }
         finally{
             setLoading(false);

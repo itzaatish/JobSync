@@ -30,7 +30,7 @@ const generateToken = (userId) => {
 };
 
 const signupHandler = async (req, res) => {
-  // console.log(req.body);
+  console.log("Signup request received", req.body);
   try {
     const { nameUser, passwordUser, mailUser } = req.body;
 
