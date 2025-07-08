@@ -1,0 +1,34 @@
+.landing-page {
+  background: linear-gradient(to bottom right, #141e30, #243b55);
+  min-height: 100vh;
+  position: relative;
+  color: white;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.6); /* optional dark overlay */
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-page h1 {
+  color: #ffffff;
+}
+
+.landing-page .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.landing-page .btn-outline-light:hover {
+  background-color: white;
+  color: #000;
+}
+
+.landing-logo {
+  max-width: 150px;
+  height: auto;
+  margin-bottom: 20px;
+}

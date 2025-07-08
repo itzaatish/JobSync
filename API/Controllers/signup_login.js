@@ -10,7 +10,7 @@ const passcodeEncrypt = async (password, rounds) => {
     const hashedPassword = await bcrypt.hash(password, salt);
     return { hashedPassword };
   } catch (error) {
-    console.error("Encryption error:", error);
+    // console.error("Encryption error:", error);
     throw error;
   }
 };
@@ -20,22 +20,23 @@ const generateToken = (userId) => {
     const date = new Date().getDate();
     return jwt.sign(
       { date, userId },
-      process.env.JWT_SECRET_KEY, // adjust this to your env variable
+      process.env.JWT_SECRET_KEY, 
       { expiresIn: "2d" }
     );
   } catch (error) {
-    console.error("Token generation error", error);
+    // console.error("Token generation error", error);
     throw error;
   }
 };
 
 const signupHandler = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const { nameUser, passwordUser, mailUser } = req.body;
 
     if (!nameUser || !passwordUser || !mailUser) {
-      return res.status(400).send("All fields not filled");
+      return res.status(400).json({
+        error: "All fields are required",});
     }
 
     const emailFound = await db.users_info.findUnique({
@@ -45,7 +46,8 @@ const signupHandler = async (req, res) => {
     });
 
     if (emailFound) {
-      return res.status(400).send("Mail error: same mail already found");
+      return res.status(400).json({
+        error: "Email already exists, please try another one",});
     }
 
     const { hashedPassword } = await passcodeEncrypt(passwordUser, 10);
@@ -58,10 +60,29 @@ const signupHandler = async (req, res) => {
       },
     });
 
-    return res.status(201).send("User created successfully");
+    const user = await db.users_info.findUnique({
+      where: {  mail_id: mailUser },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        error: "User creation failed, please try again later",});  
+    }
+
+    const token = generateToken(user.user_id);
+    return res.status(201).json({
+      message: "User created successfully",
+      token,
+      user :{
+        user_id: user.user_id,
+        name: user.name,
+        mail_id: user.mail_id,
+      }
+    });
   } catch (error) {
-    console.error("Signup error:", error);
-    return res.status(500).send("Internal server error");
+    // console.error("Signup error:", error);
+    return res.status(500).json({
+      error: `Server side error - signup failed ${error}`,});
   }
 };
 
@@ -76,24 +97,34 @@ const loginHandler = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(401).send("No user with this mail found");
+      return res.status(401).json({error: "User not found, please signup first"});
     }
 
     const match = await bcrypt.compare(passwordUser, user.password);
     if (!match) {
-      return res.status(401).send("Wrong password, try again");
+      return res.status(401).json({error: "Invalid password, please try again"});
     }
 
     const token = generateToken(user.user_id);
-    console.log("Token generated", token);
+    // console.log("Token generated", token);
 
     // Send token as JSON object (recommended)
-    return res.status(200).json({ token });
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        user_id: user.user_id,
+        name: user.name,
+        mail_id: user.mail_id,
+      }  
+    });
   } catch (error) {
-    console.error("Login error", error);
-    return res.status(500).send("Server side error - login failed");
+    // console.error("Login error", error);
+    return res.status(500).json({
+      error: `Server side error - login failed ${error}`,
+    });
   }
-};
+}
 
 
 module.exports = {

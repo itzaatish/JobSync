@@ -1,0 +1,32 @@
+.upload-box {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  min-height: 230px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.upload-box:hover {
+  background-color: #f1f1f1;
+}
+
+.file-selected {
+  background-color: #e6f0ff !important;
+  border: 2px solid #007bff;
+}
+
+.pdf-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-icon p {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #333;
+  word-break: break-word;
+  max-width: 100%;
+  text-align: center;
+}

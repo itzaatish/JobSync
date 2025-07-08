@@ -1,0 +1,51 @@
+.custom-navbar {
+  padding: 1rem 0.5rem;
+  min-height: 80px;
+  background-color: #d2d4dbf3 !important;
+}
+
+.navbar-brand-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #222 !important;
+}
+
+.nav-links-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.nav-link-custom {
+  font-size: 1.15rem;
+  color: #555 !important;
+  transition: all 0.2s ease-in-out;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+}
+
+.nav-link-custom:hover {
+  background-color: #f0f0f0;
+  color: #000 !important;
+  transform: scale(1.05);
+}
+
+.profile-dropdown {
+  margin-left: auto;
+}
+
+.profile-toggle {
+  font-size: 1.1rem;
+  color: #333 !important;
+}
+
+.profile-toggle:hover .profile-text {
+  color: #68a9e6 !important;
+}
+
+.profile-text {
+  color: #f5f3f3 !important;
+  font-weight: 500;
+}

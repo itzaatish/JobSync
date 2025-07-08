@@ -1,0 +1,19 @@
+.single-app-card {
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+.single-app-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .single-app-card {
+    padding: 1.5rem !important;
+  }
+}
+.text-primary:hover {
+  text-decoration: none;
+  color: #0056b3;
+}

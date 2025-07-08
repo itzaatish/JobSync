@@ -2,51 +2,65 @@ const ModelClient = require("@azure-rest/ai-inference").default;
 const { isUnexpected } = require("@azure-rest/ai-inference");
 const { AzureKeyCredential } = require("@azure/core-auth");
 const dotenv = require("dotenv");
-const { data } = require("../Resources/localDB");
-const { pdfGeneratorFromHtml } = require("./pdf_generator_from_html");
+const fs = require('fs');
+const path = require('path');
+const {v4: uuidv4} = require('uuid');
 
 dotenv.config();
 
-const endpoint = "https://models.github.ai/inference"; // Replace with your actual endpoint if needed
-const model = "openai/gpt-4.1"; // Don't change unless instructed
+const endpoint = "https://models.github.ai/inference"; 
+const model = "openai/gpt-4.1"; 
 const token = process.env.GPT_API_KEY;
 
-const promptGeneration = async (req, res) => {
+// This function takes in the path of the Raw resume and job description files 
+// And will call the OpenAI API to generate a new resume in HTML format 
+// This function will return the file path of generated HTML resume
+
+const ResumeParsing = async (resumeRaw , description) => {
+  let resumeContent, jobDescription, resumeFileName, resumeFilePath;
+
   try {
-    const resumeContent = data.resume;
-    const jobDescription = data.discription;
+    if(fs.existsSync(resumeRaw) && fs.existsSync(description)){
+        resumeContent = fs.readFileSync(resumeRaw, 'utf8');
+        jobDescription = fs.readFileSync(description, 'utf8');
 
+        fs.unlinkSync(resumeRaw); // Delete the raw resume file after reading
+        fs.unlinkSync(description); // Delete the job description file after reading
+    }else{
+        throw new Error("Resume or job description file not found While Parsing Through OpenAI api.");
+    }
     const messages = [
-      {
-        role: "system",
-        content: `You are a professional resume writer and career consultant with deep knowledge of applicant tracking systems (ATS), keyword optimization, and clean HTML formatting.
+    {
+      role: "system",
+      content: `You are a professional resume writer and career consultant with deep expertise in applicant tracking systems (ATS), keyword optimization, and HTML formatting for backend parsing.
 
-    Your task is to rewrite and optimize resumes using only the candidate’s data. Do not fabricate, exaggerate, or invent content. Return the result as valid HTML with inline CSS, structured strictly for easy parsing by automated systems.`,
+    Your job is to rewrite and optimize a candidate’s resume to align with a job description. You must use only the candidate’s provided content — do NOT fabricate, or invent any data , you should exaggerate the give data , try to add performance statistics and number wherever possible like in projects and Experince Sections . The final output must be valid HTML, styled using inline CSS only, and structured strictly for automated parsing by backend systems.`,
       },
       {
         role: "user",
-        content:
+        content: 
     `Here is the job description:\n${jobDescription}\n\n
-    Here is the candidate's resume:\n${resumeContent}\n\n
+    Here is the candidate’s resume:\n${resumeContent}\n\n
 
-    ⚠️ STRICT INSTRUCTIONS:
+    ⚠️ STRICT OUTPUT INSTRUCTIONS:
 
-    📦 HTML STRUCTURE RULES:
-    1. Wrap everything inside a valid <html> document with <head> and <body>.
-    2. Use <style> inside <head> for inline styling (no external files).
-    3. Each section must be wrapped inside <section> with fixed IDs listed below.
-    4. Each multi-entry block (like Education, Experience) must use <div class="entry"> for each item.
-    5. Use <ul><li>...</li></ul> for bullet points inside entries.
-    6. Ensure clean, minimal, single-column formatting — suitable for PDF rendering.
-    7. Avoid adding explanations, comments, or extra tags.
+    📦 HTML STRUCTURE REQUIREMENTS:
+    1. Wrap the entire content inside a complete <html> document with <head> and <body>.
+    2. Donot use CSS just Provide the Structure.
+    3. Each **major section** must be wrapped in a <section> tag with a fixed ID (see list below).
+    4. If a section has multiple entries (e.g., Education, Projects), wrap each one inside <div class="entry">.
+    5. Use <ul><li>...</li></ul> for bullet points.
+    6. Do not include explanations, markdown, or comments — return clean, valid HTML only.
+    7. All tags must be properly closed and well-indented.
+    8. All section headers must use semantic <h2> tags. Sub-entries may use <h3>.
 
-    📛 SECTION IDs TO USE:
-    - Full Name: id="resume-name"
+    📛 FIXED SECTION IDs:
+    - Name: id="resume-name"
     - Email: id="resume-email"
     - Phone: id="resume-phone"
     - LinkedIn: id="resume-linkedin"
     - Alternate Email: id="resume-mail"
-    - Objective (summary): id="resume-objective"
+    - Objective: id="resume-objective"
     - Education: id="resume-education"
     - Experience: id="resume-experience"
     - Skills: id="resume-skills"
@@ -56,48 +70,60 @@ const promptGeneration = async (req, res) => {
     - Extracurricular: id="resume-extracurricular"
     - Hobbies: id="resume-hobbies"
 
-    📌 SKILLS SECTION RULES:
-    - Use grouped bullet list format:
-      <li><strong>Category Name:</strong> Skill1, Skill2, Skill3</li>
-    - Limit to max 6 categories only if necessary.
-    - Each category must not exceed 5–6 items.
-    - Prioritize groupings based on the job description.
+    📌 OBJECTIVE:
+    - Must be a single short paragraph targeting the Job Description (45-50 words max).
 
-    📌 MULTI-ENTRY EXAMPLE:
-    <section id="resume-projects">
-      <h2>Projects</h2>
-      <div class="entry">
-        <h3 class="project-name">AI Resume Builder</h3>
-        <ul>
-          <li>Integrated OpenAI for tailored resume generation</li>
-          <li>Used Puppeteer to convert HTML to PDF</li>
-        </ul>
-      </div>
-    </section>
+    📌 EDUCATION:
+    - Each entry must be inside <div class="entry">
+    - Include: degree, institution (in <h3>), date (within <span>), and GPA if present.
+    - Use consistent formatting: GPA: 8.16 | Date: Nov. 2022 – May 2026
 
-    📌 SKILLS EXAMPLE:
-    <section id="resume-skills">
-      <h2>Skills</h2>
-      <ul>
-        <li><strong>Programming Languages:</strong> C++, Python, JavaScript</li>
-        <li><strong>Web Development:</strong> HTML5, CSS, React, Node.js</li>
-        <li><strong>Databases:</strong> PostgreSQL, MongoDB</li>
-        <li><strong>Version Control:</strong> GitHub, GitLab</li>
-        <li><strong>Simulation Tools:</strong> MATLAB, Simulink</li>
-      </ul>
-    </section>
+    📌 EXPERIENCE:
+    - Each entry must be inside <div class="entry">
+    - Use an <h3> to combine Company — Role
+    - A <span> below should show Location | Dates (e.g., Remote | May 2025 – Present)
+    - Bullet points inside <ul><li>...</li></ul> listing achievements
 
-    📝 FINAL NOTES:
-    - The objective/summary must not exceed 30 words.
-    - If the resume includes any unknown/new section, try your best to fit it into one of the above listed IDs.
-    - All section headers (h2) should follow semantic structure.
-    - Every tag must be properly closed.
-    - Return **valid HTML only**. No markdown. No commentary. No explanation.`
+    📌 SKILLS SECTION FORMAT:
+    - Must use <ul> with max 6 <li> entries
+    - Each line must be a **grouped category** like:
+      <li><strong>Programming Languages:</strong> C++, Python, JavaScript</li>
+    - Each group should contain **max 5–6 skills**, comma-separated
+
+    📌 PROJECTS, CERTIFICATIONS:
+    - Use <section id="resume-projects"> or id="resume-certifications"
+    - Each entry inside <div class="entry"> with <h3 class="project-name"> or <h3 class="certi-name">
+    - Add up to 3 bullet points inside <ul>
+
+    📌 OTHER LIST SECTIONS:
+    - Use <ul> under these section IDs:
+      - #resume-coding-exposure
+      - #resume-extracurricular
+      - #resume-hobbies
+    - Each point must be inside <li> (1–3 items preferred)
+
+    🛠 IF UNFAMILIAR SECTIONS APPEAR WHICH ARE NOT LISTED ABOVE:
+    - DO NOT create new section IDs.
+    - Try to **intelligently merge** unfamiliar sections into the most appropriate existing one.
+      For example:
+      - "Awards", "Achievements" → merge into #resume-certifications or #resume-extracurricular
+      - "Languages" → merge into #resume-skills
+    - Only include and optimize existing sections present in the candidate's original resume.
+    - Do not fabricate or add sections that are not already present.
+
+    🚫 DO NOT:
+    - Return markdown, code blocks, JSON, or explanations.
+    - Use dynamic JS or external CSS files.
+    - Include extra tags or branding.
+
+    ✅ YOUR OUTPUT:
+    - Valid HTML
+    - Single-column layout
+    - Readable font (e.g., Arial, Segoe UI)
+    - Printer-friendly, PDF-compatible
+    - Clean, semantic tags with correct indentation`
       }
     ];
-
-
-
 
     const client = ModelClient(endpoint, new AzureKeyCredential(token));
 
@@ -127,22 +153,23 @@ const promptGeneration = async (req, res) => {
       console.log(`🔁 Rate limit resets at: ${resetTime.toUTCString()}`);
     }
 
-
     // Handle response content
     const output = response.body.choices[0].message.content;
     try{
-      res.status(200).json({ html: output });
-      console.log("Generated HTML:", output);
-      console.log("✅ Resume generated successfully.");
+      // console.log(output);  
+      resumeFileName = `resumeAI_${uuidv4()}.html`;
+      resumeFilePath = path.join(__dirname, '../Resources', resumeFileName);
+      fs.writeFileSync(resumeFilePath, output, 'utf8');
     }catch (err) {
-      console.error("❌ Error parsing response content:", err.message);
-      throw new Error("Failed to parse response content");
+      throw new Error("Error writing the AI generated resume to file: " + err.message);
     }
     
   } catch (err) {
-    console.error("❌ Error generating resume:", err.message);
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error generating response:", err.message);
+    throw new Error("Error generating response from OpenAI API: " + err.message);
   }
+
+  return resumeFilePath; // Return the file path of the generated HTML resume
 };
 
-module.exports = { promptGeneration };
+module.exports = { ResumeParsing };

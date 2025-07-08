@@ -1,0 +1,14 @@
+.landing-container {
+  background: linear-gradient(to bottom right, #1c1c1c, #2e2e2e);
+  color: white;
+  min-height: 100vh;
+}
+
+.landing-container h1,
+.landing-container p {
+  color: #f1f1f1;
+}
+
+.landing-container a {
+  text-decoration: none;
+}

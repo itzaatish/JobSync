@@ -1,43 +1,43 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const { RawHtmlToFinal } = require('./pdf_design');
 
-// console.log(html);
+// This function generates a PDF from a raw HTML file.
+// This function takes as input the file path of the final Designed HTML file , which is generated rawtoFinalHtml function .
+// This function return a PDF buffer that can be sent as a response or saved to disk.
 
-const pdfGeneratorFromHtml = async (req, res) => {
-    let browser;
-    const html = fs.readFileSync('Resources/test.html', 'utf8'); // Adjust the path as needed
-
-    try{
-        browser = await puppeteer.launch();
-        const page = await browser.newPage();
-
-        await page.setContent(html, { waitUntil: 'networkidle0' });
-
-        const pdfBuffer = await page.pdf({
-            format: 'A4',
-            printBackground: true,
-            margin: {
-                top: '8px',
-                right: '6px',
-                bottom: '5px',
-                left: '6px'
-            }
-        });
-
-        await browser.close();
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="resume.pdf"');
-        res.setHeader('Content-Length', pdfBuffer.length);
-        res.send(pdfBuffer);
+const pdfGeneratorFromHtml = async (designHtmlPath) => {
+  let browser;
+  try {
+    const html = fs.readFileSync(designHtmlPath, 'utf8');
+    if(!html) {
+        throw new Error("The provided HTML file in the PDF generation section is empty or does not exist.");
     }
-    catch (error) {
-        console.error("Error generating PDF:", error);
-        if (browser) {
-            await browser.close();
-        }
-        res.status(500).send("Error generating PDF");
-    }
-}
+    fs.unlinkSync(designHtmlPath);
 
+    browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        top: '10px',
+        right: '12px',
+        bottom: '10px',
+        left: '17px'
+      }
+    });
+
+    await browser.close();
+    return pdfBuffer;
+
+  } catch (error) {
+    if (browser) await browser.close();
+    throw new Error(`PDF generation failed: ${error.message}`);
+  }
+};
 
 module.exports = { pdfGeneratorFromHtml };
