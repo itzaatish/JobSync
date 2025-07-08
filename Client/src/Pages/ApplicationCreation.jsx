@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
 import LoadingContext from '../Contexts/ContextLoading';
+import BannerContext from '../Contexts/ContextBanner';
 
 const CreateApplication = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ const CreateApplication = () => {
   const [errors, setErrors] = useState({});
   const { setLoading } = useContext(LoadingContext);
   const [statusMessage, setStatusMessage] = useState('');
+  const {setBanner , setBannerMessage , setBannerType , resetBanner} = useContext(BannerContext)
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,8 +46,9 @@ const CreateApplication = () => {
 
     try {
       setLoading(true);
-      setStatusMessage('Submitting...');
-
+      setBannerMessage("Submitting your application...");
+      setBannerType("alert");
+      setBanner(true);
       const token = localStorage.getItem('token');
       console.log(token);
       const response = await axios.post('http://localhost:2000/create_application', formData, {
@@ -54,22 +57,34 @@ const CreateApplication = () => {
         },
       });
 
-      setStatusMessage(response.data.message || '✅ Application submitted successfully!');
-      setFormData({
-        CompanyName: '',
-        JobTitle: '',
-        ResumeUsed: '',
-        CoverLetterUsed: '',
-        Status: 'APPLIED',
-        ApplicationDate: '',
-        PersonalNotes: '',
-      });
-
+      if (response.status === 201) {
+        setLoading(false);
+        resetBanner();
+        setBannerMessage('Application submitted successfully!');
+        setBannerType('alert');
+        setBanner(true);
+          setFormData({
+            CompanyName: '',
+            JobTitle: '',
+            ResumeUsed: '',
+            CoverLetterUsed: '',
+            Status: 'APPLIED',
+            ApplicationDate: '',
+            PersonalNotes: '',
+          });
+      } else {
+        setLoading(false);
+        resetBanner();
+        setBannerMessage("Failed to submit application.");
+        setBannerType("alert");
+        setBanner(true);
+      }
     } catch (error) {
-      console.error('Submission error:', error);
-      setStatusMessage('❌ Failed to submit application.');
-    } finally {
       setLoading(false);
+      resetBanner();
+      setBannerMessage("An error occurred while submitting the application.");
+      setBannerType("alert");
+      setBanner(true);
     }
   };
 

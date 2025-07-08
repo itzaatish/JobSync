@@ -17,7 +17,6 @@ const extractData = ($, resumeData) => {
   $('#resume-education .entry').each((i, elem) => {
     const entry = $(elem);
     const allSpans = entry.find('span').map((i, el) => $(el).text().trim()).get();
-
     resumeData.education.push({
       degree: allSpans[0] || '',
       institution: entry.find('h3').text().trim() || '',
@@ -30,9 +29,7 @@ const extractData = ($, resumeData) => {
     const entry = $(elem);
     const header = entry.find('h3').text().trim();
     const meta = entry.find('span').first().text().trim();
-
     const [company, role] = header.split('—').map(t => t.trim());
-
     resumeData.experience.push({
       role: role || '',
       company: company || '',
@@ -40,7 +37,6 @@ const extractData = ($, resumeData) => {
       points: entry.find('ul li').map((i, li) => $(li).text().trim()).get()
     });
   });
-
 
   $('#resume-skills ul li').each((i, li) => {
     const line = $(li).text().trim();
@@ -81,50 +77,65 @@ const extractData = ($, resumeData) => {
   return resumeData;
 };
 
-// This function processes the raw HTML resume and extracts structured data into a final HTML format.
-// It uses Cheerio to parse the HTML and extract relevant sections like name, contact info,
-// objective, education, experience, skills, projects, certifications, coding exposure, extracurricular activities, and hobbies.
-// The Function takes in file path generate by the AI and at last a new final .html file path is returned.
+// Converts raw HTML resume to a final structured HTML file
+// This function reads the HTML file, extracts data using Cheerio, and formats it into a final HTML structure.
+// This Function returns the path to the final HTML file.
 
 function rawHtmlToFinal(resumeAIFilePath) {
   const html = fs.readFileSync(resumeAIFilePath, 'utf8');
   fs.unlinkSync(resumeAIFilePath);
-  if(!html){
-    throw new Error("The provided HTML file in the desing Pdf section is empty or does not exist.");
-  }
+  if (!html) throw new Error("The provided HTML is empty.");
+
   const $ = cheerio.load(html);
 
+  // ✅ Initialize and extract
   const resumeData = {
-    name: "",
-    email: "",
-    phone: "",
-    linkedin: "",
-    mail: "",
-    objective: "",
+    name: '',
+    email: '',
+    phone: '',
+    linkedin: '',
+    mail: '',
+    objective: '',
     education: [],
     experience: [],
-    skills: {}, 
+    skills: {},
     projects: [],
     certifications: [],
     codingExposure: [],
     extracurricular: [],
     hobbies: []
   };
+  extractData($, resumeData); // ✅ Call the parser properly
 
-  extractData($, resumeData);
-
-  const $new = cheerio.load(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Resume</title><style>${css}</style></head><body></body></html>`);
+  // ✅ Inline CSS instead of linking (Puppeteer won't follow href reliably)
+  const $new = cheerio.load(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>${resumeData.name} - Resume</title>
+      <style>${css}</style>
+    </head>
+    <body></body>
+    </html>
+  `);
   const body = $new('body');
 
-  const appendSection = (id, title, content) => {
-    if (!content || (Array.isArray(content) && content.length === 0)) return;
-    const section = $new(`<section id="${id}"><h2>${title}</h2></section>`);
-    section.append(content);
-    body.append(section);
-  };
+  const appendSection = (id, title, content, className = "header") => {
+  if (
+    !content || 
+    (typeof content === 'string' && content.trim() === '') || 
+    (Array.isArray(content) && content.length === 0)
+  ) return;
 
-  const header = $new('<div id="resume-header"></div>');
-  if (resumeData.name) header.append(`<section id="resume-name"><h1>${resumeData.name}</h1></section>`);
+  const section = $new(`<section id="${id}"></section>`);
+  section.append(`<h2 class="${className}">${title}</h2>`);
+  section.append(content);
+  body.append(section);
+};
+
+  const header = $new('<div id="resume-header" class="header"></div>');
+  header.append(`<section id="resume-name"><h1>${resumeData.name}</h1></section>`);
   const contact = $new('<div id="resume-contact"></div>');
   if (resumeData.email) contact.append(`<section id="resume-email"><div>${resumeData.email}</div></section>`);
   if (resumeData.phone) contact.append(`<section id="resume-phone"><div>${resumeData.phone}</div></section>`);
@@ -135,66 +146,54 @@ function rawHtmlToFinal(resumeAIFilePath) {
 
   appendSection('resume-objective', 'Objective', `<div>${resumeData.objective}</div>`);
 
-  if (resumeData.education.length) {
-    const html = resumeData.education.map(e => `
-      <div class="entry">
-        <span class="edu-degree">${e.degree}</span>,
-        <span class="edu-inst">${e.institution}</span>
-        <span class="edu-date">${e.date}</span>
-        ${e.gpa ? `<div>GPA: ${e.gpa}</div>` : ''}
-      </div>`).join('');
-    appendSection('resume-education', 'Education', html);
-  }
+  const eduHTML = resumeData.education.map(e => `
+    <div class="entry">
+      <span class="edu-degree">${e.degree}</span>,
+      <span class="edu-inst">${e.institution}</span>
+      <span class="edu-date">${e.date}</span>
+      ${e.gpa ? `<div>GPA: ${e.gpa}</div>` : ''}
+    </div>`).join('');
+  appendSection('resume-education', 'Education', eduHTML);
 
-  if (Object.keys(resumeData.skills).length) {
-    const html = Object.entries(resumeData.skills).map(([k, v]) => `<li><strong>${k}:</strong> ${v.join(', ')}</li>`).join('');
-    appendSection('resume-skills', 'Skills', `<ul>${html}</ul>`);
-  }
+  const skillsHTML = Object.entries(resumeData.skills).map(([k, v]) => `<li><strong>${k}:</strong> ${v.join(', ')}</li>`).join('');
+  appendSection('resume-skills', 'Skills', `<ul>${skillsHTML}</ul>`);
 
-  if (resumeData.experience.length) {
-    const html = resumeData.experience.map(e => `
-      <div class="entry">
-        <span class="exp-role">${e.role}</span>,
-        <span class="exp-company">${e.company}</span>
-        <span class="exp-date">${e.date}</span>
-        <ul>${e.points.map(p => `<li>${p}</li>`).join('')}</ul>
-      </div>`).join('');
-    appendSection('resume-experience', 'Professional Experience', html);
-  }
+  const expHTML = resumeData.experience.map(e => `
+    <div class="entry">
+      <span class="exp-role">${e.role}</span>,
+      <span class="exp-company">${e.company}</span>
+      <span class="exp-date">${e.date}</span>
+      <ul>${e.points.map(p => `<li>${p}</li>`).join('')}</ul>
+    </div>`).join('');
+  appendSection('resume-experience', 'Professional Experience', expHTML);
 
-  if (resumeData.projects.length) {
-    const html = resumeData.projects.map(p => `
-      <div class="entry">
-        <h3 class="project-name">${p.name}</h3>
-        <ul>${p.points.map(pt => `<li>${pt}</li>`).join('')}</ul>
-      </div>`).join('');
-    appendSection('resume-projects', 'Projects', html);
-  }
+  const projHTML = resumeData.projects.map(p => `
+    <div class="entry">
+      <h3 class="project-name">${p.name}</h3>
+      <ul>${p.points.map(pt => `<li>${pt}</li>`).join('')}</ul>
+    </div>`).join('');
+  appendSection('resume-projects', 'Projects', projHTML);
 
-  if (resumeData.certifications.length) {
-    const html = resumeData.certifications.map(c => `
-      <div class="entry">
-        <h3 class="certi-name">${c.name}</h3>
-        <ul>${c.points.map(p => `<li>${p}</li>`).join('')}</ul>
-      </div>`).join('');
-    appendSection('resume-certifications', 'Certifications', html);
-  }
+  const certHTML = resumeData.certifications.map(c => `
+    <div class="entry">
+      <h3 class="certi-name">${c.name}</h3>
+      <ul>${c.points.map(p => `<li>${p}</li>`).join('')}</ul>
+    </div>`).join('');
+  appendSection('resume-certifications', 'Certifications', certHTML);
 
-  const listSection = (id, title, items) => {
-    if (!items.length) return;
-    appendSection(id, title, `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`);
-  };
+  const extracurHTML = resumeData.extracurricular.map(item => `<li>${item}</li>`).join('');
+  appendSection('resume-extracurricular', 'Extracurricular Activities', `<ul>${extracurHTML}</ul>`);
 
-  listSection('resume-coding-exposure', 'Coding Exposure', resumeData.codingExposure);
-  listSection('resume-extracurricular', 'Extracurricular Activities', resumeData.extracurricular);
-  listSection('resume-hobbies', 'Hobbies', resumeData.hobbies);
+  const codingHTML = resumeData.codingExposure.map(item => `<li>${item}</li>`).join('');
+  appendSection('resume-coding-exposure', 'Coding Exposure', `<ul>${codingHTML}</ul>`);
 
-  const resumeFileName = `designResume_${uuidv4()}.html`
-  const resumeFilePath = path.join(__dirname , '../Resources' , resumeFileName);
-  
-  fs.writeFileSync(resumeFilePath, $new.html(), 'utf8');
-  
-  return resumeFilePath;
+  const hobbiesHTML = resumeData.hobbies.map(item => `<li>${item}</li>`).join('');
+  appendSection('resume-hobbies', 'Hobbies', `<ul>${hobbiesHTML}</ul>`);
+
+  const finalPath = path.join(__dirname, '../Resources', `final_resume_${uuidv4()}.html`);
+  fs.writeFileSync(finalPath, $new.html(), 'utf8');
+
+  return finalPath;
 }
 
 module.exports = { rawHtmlToFinal };

@@ -1,6 +1,7 @@
 .custom-navbar {
   padding: 1rem 0.5rem;
   min-height: 80px;
+  background-color: #d2d4dbf3 !important;
 }
 
 .navbar-brand-text {

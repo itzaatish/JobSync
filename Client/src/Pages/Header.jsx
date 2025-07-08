@@ -10,7 +10,7 @@ import "./Header.css";
 const Header = () => {
   const { isLoggedIn, logout } = useContext(AuthContext);
   const [expanded, setExpanded] = useState(false);
-  const { user , clearData } = useContext(UserContext);
+  const { user, clearData } = useContext(UserContext);
   const navigate = useNavigate();
 
   const setLogout = () => {
@@ -29,36 +29,53 @@ const Header = () => {
       fixed="top"
     >
       <Container>
-        <Navbar.Brand href="/dashboard" className="navbar-brand-text">
+        {/* ✅ Logo placeholder added here */}
+        <Navbar.Brand href="/dashboard" className="navbar-brand-text d-flex align-items-center">
+          <img
+            src="/logo1.png" // ← replace with actual logo path
+            alt="Logo"
+            height="40"
+            className="me-2"
+          />
           JobSync
         </Navbar.Brand>
+
         <Navbar.Toggle
           aria-controls="basic-navbar-nav"
           onClick={() => setExpanded((prev) => !prev)}
         >
           <FaBars color="#333" size={24} />
         </Navbar.Toggle>
+
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mx-auto nav-links-wrapper">
-            {!isLoggedIn ? (
-              <>
-                <Nav.Link href="/login" className="nav-link-custom">Login</Nav.Link>
-                <Nav.Link href="/signup" className="nav-link-custom">Register</Nav.Link>
-              </>
-            ) : (
-              <>
-                <Nav.Link href="/generate-resume" className="nav-link-custom">
-                  Generate Resume
-                </Nav.Link>
-                <Nav.Link href="/track-applications" className="nav-link-custom">
-                  Track Applications
-                </Nav.Link>
-                <Nav.Link href="/add-application" className="nav-link-custom">
-                  New Application
-                </Nav.Link>
-              </>
-            )}
-          </Nav>
+          {/* ✅ Logged-in nav stays centered */}
+          {isLoggedIn && (
+            <Nav className="mx-auto nav-links-wrapper">
+              <Nav.Link href="/input-resume" className="nav-link-custom">
+                Generate Resume
+              </Nav.Link>
+              <Nav.Link href="/applications" className="nav-link-custom">
+                Track Applications
+              </Nav.Link>
+              <Nav.Link href="/add-application" className="nav-link-custom">
+                New Application
+              </Nav.Link>
+            </Nav>
+          )}
+
+          {/* ✅ Login/Signup goes right aligned when not logged in */}
+          {!isLoggedIn && (
+            <Nav className="ms-auto d-flex gap-2">
+              <Nav.Link href="/login" className="nav-link-custom">
+                Login
+              </Nav.Link>
+              <Nav.Link href="/signup" className="nav-link-custom">
+                Register
+              </Nav.Link>
+            </Nav>
+          )}
+
+          {/* ✅ Profile dropdown remains right */}
           {isLoggedIn && (
             <Dropdown align="end" className="profile-dropdown">
               <Dropdown.Toggle

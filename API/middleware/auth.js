@@ -5,6 +5,7 @@ const authHandler = (req, res, next) => {
     // console.log("Auth header:", head);
 
     if (!head || !head.toLowerCase().startsWith("bearer ")) {
+        console.log("Authorization header is missing or invalid");
         return res.status(401).send("Authorization Failed");
     }
 

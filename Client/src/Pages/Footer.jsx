@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   const initials = "AK"; 
-
+  
   return (
     <footer className="bg-black text-white py-2 mt-auto">
       <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center">
@@ -26,8 +26,8 @@ const Footer = () => {
 
         
         <div className="text-center text-md-start mb-3 mb-md-0">
-          <a href="#about" className="text-white text-decoration-none me-3">About</a>
-          <a href="#contact" className="text-white text-decoration-none me-3">Contact</a>
+          <a href="about" className="text-white text-decoration-none me-3">About</a>
+          <a href="https://itzaatish.github.io/Portfolio/#/contact" target="blank" className="text-white text-decoration-none me-3">Contact</a>
           <a href="#terms" className="text-white text-decoration-none">Terms</a>
         </div>
 

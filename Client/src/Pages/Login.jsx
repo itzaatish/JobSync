@@ -5,28 +5,36 @@ import UserContext from "../Contexts/ContextUser";
 import LoadingContext from "../Contexts/ContextLoading";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Login.css"; // if any custom styles
+import BannerContext from "../Contexts/ContextBanner";
+import { set } from "date-fns";
 
 const Login = () => {
   const navigate = useNavigate();
   const { getData } = useContext(UserContext);
   const { isLoading , setLoading } = useContext(LoadingContext);
-  console.log(isLoading);
+  const { setBanner , setBannerType , setBannerMessage , resetBanner} = useContext(BannerContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    // setError("");
 
     if (!email || !password) {
-      setError("Please fill in all fields.");
+      resetBanner();
+      setBannerMessage("Email and password are required.");
+      setBannerType("alert"); 
+      setBanner(true);
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address.");
+      resetBanner();
+      setBannerMessage("Please enter a valid email address.");
+      setBannerType("alert");
+      setBanner(true);
       return;
     }
 
@@ -38,15 +46,20 @@ const Login = () => {
     try {
       setLoading(true);
       const response = await axios.post("http://localhost:2000/login", payload);
-
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       getData(user.user_id, user.name, user.mail_id);
-      console.log(isLoading);
+      setLoading(false);
+      resetBanner();
+      setBannerMessage("Login successful!");
+      setBannerType("alert");
+      setBanner(true);
       navigate("/dashboard");
     } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
-      setError("Invalid email or password.");
+      setLoading(false);
+      setBannerMessage("Login failed. Please check your credentials.");
+      setBannerType("alert");
+      setBanner(true);
     }finally{
       setLoading(false);
     }

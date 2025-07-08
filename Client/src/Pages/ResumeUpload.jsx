@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
 import { FaFilePdf } from 'react-icons/fa';
 import LoadingContext from '../Contexts/ContextLoading';
+import BannerContext from '../Contexts/ContextBanner';
 import axios from 'axios';
 import './ResumeUpload.css';
 
@@ -10,16 +11,20 @@ const ResumeUploader = () => {
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('');
   const { setLoading } = useContext(LoadingContext);
+  const { setBannerMessage, setBannerType, setBanner , resetBanner} = useContext(BannerContext);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-    setStatus('');
+    // setStatus('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file || !description) {
-      setStatus('⚠️ Please select a PDF and fill job description.');
+      resetBanner();
+      setBannerMessage('Please upload a resume and provide a job description.');
+      setBannerType('alert');
+      setBanner(true);
       return;
     }
 
@@ -29,7 +34,6 @@ const ResumeUploader = () => {
 
     try {
       setLoading(true);
-      setStatus('📤 Uploading...');
       const response = await axios.post('http://localhost:2000/upload', formData, {
         responseType: 'blob',
         headers: { 'Content-Type': 'multipart/form-data' ,
@@ -44,18 +48,26 @@ const ResumeUploader = () => {
       a.download = 'resume.pdf';
       a.click();
       window.URL.revokeObjectURL(url);
-      setStatus('✅ Resume downloaded successfully.');
-    } catch (err) {
-      console.error(err);
-      setStatus('❌ Upload failed.');
-    } finally {
+      
       setLoading(false);
+      resetBanner();
+      setBannerMessage(' Resume Downloaded Successfully!');
+      setBannerType('alert');
+      setBanner(true);
+    } catch (err) {
+      setLoading(false);
+      resetBanner();
+      setBannerMessage('Failed to upload resume. Please try again.');
+      setBannerType('alert');
+      setBanner(true);
     }
   };
 
   return (
     <Container className="py-5 mt-5">
-      <h2 className="text-center mb-4">Upload Your Resume & Job Description</h2>
+      <h2 className="fw-bold text-secondary display-6 custom-heading mb-5">
+            Upload Resume and Job Description -
+          </h2>
       <Form onSubmit={handleSubmit}>
         <Row className="justify-content-center g-4">
           {/* Resume Upload */}
@@ -94,7 +106,7 @@ const ResumeUploader = () => {
         {/* Submit Button */}
         <div className="text-center mt-4">
           <Button variant="primary" type="submit" size="lg" className="px-5 py-2">
-            Submit
+            Submit & Download
           </Button>
         </div>
 

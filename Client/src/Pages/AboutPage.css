@@ -1,0 +1,22 @@
+.about-page {
+  background-color: #121212;
+  min-height: 100vh;
+}
+
+.about-card {
+  background-color: #1e1e1e;
+  border: none;
+}
+
+.about-page h1,
+.about-page h3 {
+  color: #f8f9fa;
+}
+
+.about-page .card-title {
+  color: #ffffff;
+}
+
+.about-page .card-text {
+  color: #cccccc;
+}

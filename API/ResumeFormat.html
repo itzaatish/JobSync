@@ -3,78 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Aatish Kumar - Resume</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 10px auto;
-      max-width: 800px;
-      background: #fff;
-      color: #222;
-    }
-
-    h1, h2, h3 {
-      margin: 0.5em 0 0.3em;
-    }
-
-    h1 {
-      font-size: 2em;
-    }
-
-    h2 {
-      font-size: 1.4em;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 4px;
-      margin-top: 1.5em;
-    }
-
-    h3 {
-      font-size: 1.1em;
-      margin-bottom: 0.2em;
-    }
-
-    ul {
-      margin: 0.4em 0 1em;
-      padding-left: 1.4em;
-    }
-
-    li {
-      margin-bottom: 0.3em;
-    }
-
-    .entry {
-      margin-bottom: 1.2em;
-    }
-
-    .edu-degree, .exp-role, .project-name, .certi-name {
-      font-weight: bold;
-    }
-
-    .edu-inst, .exp-company {
-      font-style: italic;
-    }
-
-    .edu-date, .exp-date, .project-date {
-      float: right;
-      color: #666;
-      font-size: 0.95em;
-    }
-
-    a {
-      color: #0366d6;
-      text-decoration: none;
-    }
-
-    #resume-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-  </style>
+  <link rel="stylesheet" href="/API/Controllers/pdf_design.css">
 </head>
 <body>
-    <div id="resume-header"> 
+  <div id="resume-header" className="header"> 
   <section id="resume-name">
     <h1>Aatish Kumar</h1>
   </section>
@@ -90,8 +22,8 @@
     <div>Software engineer with strong C++, Python, and full-stack development skills, seeking impactful backend or system integration opportunities.</div>
   </section>
 
-  <section id="resume-education">
-    <h2>Education</h2>
+  <section id="resume-education" >
+    <h2 className="header">Education</h2>
     <div class="entry">
       <span class="edu-degree">B-Tech in Electronics and Communication Engineering</span>,
       <span class="edu-inst">NIT Agartala, Tripura</span>
@@ -105,8 +37,8 @@
     </div>
   </section>
 
-  <section id="resume-skills">
-    <h2>Skills</h2>
+  <section id="resume-skills" >
+    <h2 className="header">Skills</h2>
     <ul>
       <li><strong>Programming Languages:</strong> C++, Python, JavaScript, C</li>
       <li><strong>Web Development:</strong> HTML5, CSS, React.js, Express.js, Node.js, Bootstrap</li>
@@ -117,7 +49,7 @@
   </section>
 
   <section id="resume-experience">
-    <h2>Professional Experience</h2>
+    <h2 className="header">Professional Experience</h2>
 
     <div class="entry">
       <span class="exp-role">SDE Intern – IPO Web Platform</span>,
@@ -141,7 +73,7 @@
   </section>
 
   <section id="resume-projects">
-    <h2>Projects</h2>
+    <h2 className="header">Projects</h2>
 
     <div class="entry">
       <h3 class="project-name">Real Estate Web App</h3>
@@ -161,7 +93,7 @@
   </section>
 
   <section id="resume-extracurricular">
-    <h2>Extracurricular Activities</h2>
+    <h2 className="header">Extracurricular Activities</h2>
     <ul>
       <li>Obstacle-Avoiding Rover Development — ANARC Robotics Club</li>
       <li>Led project execution, team collaboration, and microcontroller programming at NIT Agartala</li>
@@ -169,7 +101,7 @@
   </section>
 
   <section id="resume-coding-exposure">
-    <h2>Coding Exposure</h2>
+    <h2 className="header" >Coding Exposure</h2>
     <ul>
       <li>800+ DSA problems solved across LeetCode, Codeforces, AtCoder</li>
       <li>Knight rank on LeetCode; regular contest participation</li>
