@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Navbar, Nav, Container, Dropdown } from "react-bootstrap";
 import { FaUserCircle, FaBars } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; 
 import AuthContext from "../Contexts/ContextAuth";
 import UserContext from "../Contexts/ContextUser";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -29,10 +29,10 @@ const Header = () => {
       fixed="top"
     >
       <Container>
-        {/* ✅ Logo placeholder added here */}
-        <Navbar.Brand href="/dashboard" className="navbar-brand-text d-flex align-items-center">
+        {/* ✅ Logo placeholder updated to Link */}
+        <Navbar.Brand as={Link} to="/dashboard" className="navbar-brand-text d-flex align-items-center">
           <img
-            src="/logo1.png" // ← replace with actual logo path
+            src="/logo1.png"
             alt="Logo"
             height="40"
             className="me-2"
@@ -48,34 +48,31 @@ const Header = () => {
         </Navbar.Toggle>
 
         <Navbar.Collapse id="basic-navbar-nav">
-          {/* ✅ Logged-in nav stays centered */}
           {isLoggedIn && (
             <Nav className="mx-auto nav-links-wrapper">
-              <Nav.Link href="/input-resume" className="nav-link-custom">
+              <Nav.Link as={Link} to="/input-resume" className="nav-link-custom">
                 Generate Resume
               </Nav.Link>
-              <Nav.Link href="/applications" className="nav-link-custom">
+              <Nav.Link as={Link} to="/applications" className="nav-link-custom">
                 Track Applications
               </Nav.Link>
-              <Nav.Link href="/add-application" className="nav-link-custom">
+              <Nav.Link as={Link} to="/add-application" className="nav-link-custom">
                 New Application
               </Nav.Link>
             </Nav>
           )}
 
-          {/* ✅ Login/Signup goes right aligned when not logged in */}
           {!isLoggedIn && (
             <Nav className="ms-auto d-flex gap-2">
-              <Nav.Link href="/login" className="nav-link-custom">
+              <Nav.Link as={Link} to="/login" className="nav-link-custom">
                 Login
               </Nav.Link>
-              <Nav.Link href="/signup" className="nav-link-custom">
+              <Nav.Link as={Link} to="/signup" className="nav-link-custom">
                 Register
               </Nav.Link>
             </Nav>
           )}
 
-          {/* ✅ Profile dropdown remains right */}
           {isLoggedIn && (
             <Dropdown align="end" className="profile-dropdown">
               <Dropdown.Toggle
@@ -87,7 +84,7 @@ const Header = () => {
                 <span className="profile-text">{user.name}</span>
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item href="/profile">My Profile</Dropdown.Item>
+                <Dropdown.Item as={Link} to="/profile">My Profile</Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item onClick={setLogout}>Logout</Dropdown.Item>
               </Dropdown.Menu>

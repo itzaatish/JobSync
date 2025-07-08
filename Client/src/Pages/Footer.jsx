@@ -1,4 +1,5 @@
-import React from "react";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const initials = "AK"; 
@@ -24,16 +25,21 @@ const Footer = () => {
           <span className="fw-semibold">JobSync by Aatish Kumar</span>
         </div>
 
-        
         <div className="text-center text-md-start mb-3 mb-md-0">
-          <a href="about" className="text-white text-decoration-none me-3">About</a>
-          <a href="https://itzaatish.github.io/Portfolio/#/contact" target="blank" className="text-white text-decoration-none me-3">Contact</a>
-          <a href="#terms" className="text-white text-decoration-none">Terms</a>
+          <Link to="/about" className="text-white text-decoration-none me-3">About</Link>
+          <a
+            href="https://itzaatish.github.io/Portfolio/#/contact"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white text-decoration-none me-3"
+          >
+            Contact
+          </a>
+          <Link to="/" className="text-white text-decoration-none">Terms</Link>
         </div>
 
-        
         <div className="text-center text-md-end small">
-         &copy; {new Date().getFullYear()} JobSync. All rights reserved.
+          &copy; {new Date().getFullYear()} JobSync. All rights reserved.
         </div>
       </div>
     </footer>

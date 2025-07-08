@@ -19,7 +19,6 @@ const ApplicationsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Newest");
   const { setLoading } = useContext(LoadingContext);
-
   const fetchApplications = async () => {
     try {
       setLoading(true);
