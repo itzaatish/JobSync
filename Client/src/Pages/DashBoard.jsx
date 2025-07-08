@@ -39,7 +39,7 @@ const Dashboard = () => {
                 <Card.Text>
                   Monitor the status and history of your job applications.
                 </Card.Text>
-                <Link to="/track-applications" className="btn btn-outline-success">Track</Link>
+                <Link to="/applications" className="btn btn-outline-success">Track</Link>
               </Card.Body>
             </Card>
           </Col>
