@@ -6,7 +6,7 @@ import { Card, Container, Row, Col, Button } from "react-bootstrap";
 import { FileEarmarkTextFill, ClipboardCheckFill, PlusCircleFill } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import WelcomeBanner from "./WelcomeBanner";
-import "./Dashboard.css";
+import "./DashBoard.css";
 
 
 const Dashboard = () => {
