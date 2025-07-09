@@ -16,7 +16,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
+  const BaseURL = import.meta.env.VITE_APP_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

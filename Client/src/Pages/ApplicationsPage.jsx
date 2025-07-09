@@ -19,7 +19,7 @@ const ApplicationsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Newest");
   const { setLoading } = useContext(LoadingContext);
-  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
+  const BaseURL = import.meta.env.VITE_APP_BASE_URL;
 
   const fetchApplications = async () => {
     try {

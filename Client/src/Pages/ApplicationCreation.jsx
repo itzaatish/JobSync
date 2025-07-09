@@ -19,7 +19,7 @@ const CreateApplication = () => {
   const { setLoading } = useContext(LoadingContext);
   const [statusMessage, setStatusMessage] = useState('');
   const {setBanner , setBannerMessage , setBannerType , resetBanner} = useContext(BannerContext)
-  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
+  const BaseURL = import.meta.env.VITE_APP_BASE_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;

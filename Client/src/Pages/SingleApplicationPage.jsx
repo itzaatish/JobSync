@@ -14,7 +14,7 @@ const SingleApplication = () => {
   const [error, setError] = useState(null);
   const { setLoading } = useContext(LoadingContext);
   const { setBannerMessage , setBanner , setBannerType } = useContext(BannerContext)
-  const BaseURL = process.meta.env.REACT_APP_BASE_URL ;
+  const BaseURL = import.meta.env.VITE_APP_BASE_URL ;
 
   useEffect(() => {
     const fetchSingleApplication = async () => {

@@ -12,7 +12,7 @@ const ResumeUploader = () => {
   const [status, setStatus] = useState('');
   const { setLoading } = useContext(LoadingContext);
   const { setBannerMessage, setBannerType, setBanner , resetBanner} = useContext(BannerContext);
-  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
+  const BaseURL = import.meta.env.VITE_APP_BASE_URL;
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);

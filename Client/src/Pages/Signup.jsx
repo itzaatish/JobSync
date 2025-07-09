@@ -14,7 +14,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const BaseURL = process.meta.env.REACT_APP_BASE_URL; 
+  const BaseURL = import.meta.env.VITE_APP_BASE_URL; 
   const { getData } = useContext(UserContext);
   const { setLoading } = useContext(LoadingContext);
 

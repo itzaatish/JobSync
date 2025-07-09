@@ -16,7 +16,7 @@ const statusColors = {
 const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
   const { company_name, job_title, status, application_date, application_id } = application;
   const {setBannerMessage , setBannerType , setBanner , setConfirmAction } = useContext(BannerContext);
-  const BaseURL = process.meta.env.REACT_APP_BASE_URL;
+  const BaseURL = import.meta.env.VITE_APP_BASE_URL;
 
   const handleDeleteConfimation = () => {
     setBannerMessage("Are you sure you want to delete this application?");
