@@ -11,19 +11,45 @@ const extractData = ($, resumeData) => {
   resumeData.email = $('#resume-email').text().trim();
   resumeData.phone = $('#resume-phone').text().trim();
   resumeData.linkedin = $('#resume-linkedin').text().trim();
-  resumeData.mail = $('#resume-mail').text().trim();
+  // resumeData.mail = $('#resume-mail').text().trim();
   resumeData.objective = $('#resume-objective').text().replace('Objective', '').trim();
 
   $('#resume-education .entry').each((i, elem) => {
     const entry = $(elem);
-    const allSpans = entry.find('span').map((i, el) => $(el).text().trim()).get();
+    const h3Text = entry.find('h3').text().trim();
+    const spanText = entry.find('span').text().trim();
+
+    // Extract GPA and date from spanText
+    const gpaMatch = spanText.match(/GPA[:\s]*([\d.]+)/);
+    const dateMatch = spanText.match(/Date[:\s]*(.+)/);
+
+    // If GPA and Date are present in one span with "|", split and parse
+    let gpa = null;
+    let date = '';
+    if (spanText.includes('|')) {
+        const parts = spanText.split('|').map(s => s.trim());
+        parts.forEach(p => {
+          if (p.toLowerCase().includes('gpa')) {
+            gpa = p.match(/GPA[:\s]*([\d.]+)/)?.[1] || null;
+          } else if (p.toLowerCase().includes('date')) {
+            date = p.replace(/Date[:\s]*/i, '');
+          } else if (/\d{4}/.test(p)) {
+            date = p; // fallback if "Date:" is not written
+          }
+        });
+      } else {
+        gpa = gpaMatch ? gpaMatch[1] : null;
+        date = dateMatch ? dateMatch[1].trim() : spanText;
+    }
+
     resumeData.education.push({
-      degree: allSpans[0] || '',
-      institution: entry.find('h3').text().trim() || '',
-      date: allSpans[1]?.split('|')[1]?.trim() || '',
-      gpa: allSpans[1]?.includes('GPA') ? allSpans[1].match(/GPA[:\s]*([\d.]+)/)?.[1] : null
+      degree: h3Text.split('–')[0].trim(),
+      institution: h3Text.includes('–') ? h3Text.split('–')[1].trim() : '',
+      date,
+      gpa
     });
   });
+
 
   $('#resume-experience .entry').each((i, elem) => {
     const entry = $(elem);
@@ -82,6 +108,7 @@ const extractData = ($, resumeData) => {
 // This Function returns the path to the final HTML file.
 
 function rawHtmlToFinal(resumeAIFilePath) {
+  // console.log("Raw HTML File Path:", resumeAIFilePath);
   const html = fs.readFileSync(resumeAIFilePath, 'utf8');
   fs.unlinkSync(resumeAIFilePath);
   if (!html) throw new Error("The provided HTML is empty.");
@@ -106,7 +133,7 @@ function rawHtmlToFinal(resumeAIFilePath) {
     hobbies: []
   };
   extractData($, resumeData); // ✅ Call the parser properly
-
+  // console.log("Resume Data Extracted:", resumeData);
   // ✅ Inline CSS instead of linking (Puppeteer won't follow href reliably)
   const $new = cheerio.load(`
     <!DOCTYPE html>
@@ -122,17 +149,22 @@ function rawHtmlToFinal(resumeAIFilePath) {
   const body = $new('body');
 
   const appendSection = (id, title, content, className = "header") => {
-  if (
-    !content || 
-    (typeof content === 'string' && content.trim() === '') || 
-    (Array.isArray(content) && content.length === 0)
-  ) return;
+    if (
+      !content ||
+      (typeof content === 'string' && content.trim() === '') ||
+      (Array.isArray(content) && content.length === 0) ||
+      (typeof content === 'object' && typeof content.children === 'function' && content.children().length === 0) ||
+      (typeof content === 'object' && content.html && content.html().trim() === '')
+    ) return;
 
-  const section = $new(`<section id="${id}"></section>`);
-  section.append(`<h2 class="${className}">${title}</h2>`);
-  section.append(content);
-  body.append(section);
-};
+    const section = $new(`<section id="${id}"></section>`);
+    console.log(`Appending section: ${id} with title: ${title}`);
+    section.append(`<h2 class="${className}">${title}</h2>`);
+    section.append(content);
+    body.append(section);
+  };
+
+
 
   const header = $new('<div id="resume-header" class="header"></div>');
   header.append(`<section id="resume-name"><h1>${resumeData.name}</h1></section>`);
@@ -181,14 +213,20 @@ function rawHtmlToFinal(resumeAIFilePath) {
     </div>`).join('');
   appendSection('resume-certifications', 'Certifications', certHTML);
 
-  const extracurHTML = resumeData.extracurricular.map(item => `<li>${item}</li>`).join('');
-  appendSection('resume-extracurricular', 'Extracurricular Activities', `<ul>${extracurHTML}</ul>`);
+    if (resumeData.extracurricular && resumeData.extracurricular.length > 0) {
+      const extracurHTML = resumeData.extracurricular.map(item => `<li>${item}</li>`).join('');
+      appendSection('resume-extracurricular', 'Extracurricular Activities', `<ul>${extracurHTML}</ul>`);
+    }
 
-  const codingHTML = resumeData.codingExposure.map(item => `<li>${item}</li>`).join('');
-  appendSection('resume-coding-exposure', 'Coding Exposure', `<ul>${codingHTML}</ul>`);
+  if (resumeData.codingExposure && resumeData.codingExposure.length > 0) {
+      const codingHTML = resumeData.codingExposure.map(item => `<li>${item}</li>`).join('');
+      appendSection('resume-coding-exposure', 'Coding Exposure', `<ul>${codingHTML}</ul>`);
+    }
 
-  const hobbiesHTML = resumeData.hobbies.map(item => `<li>${item}</li>`).join('');
-  appendSection('resume-hobbies', 'Hobbies', `<ul>${hobbiesHTML}</ul>`);
+  if (resumeData.hobbies && resumeData.hobbies.length > 0) {
+      const hobbiesHTML = resumeData.hobbies.map(item => `<li>${item}</li>`).join('');
+      appendSection('resume-hobbies', 'Hobbies', `<ul>${hobbiesHTML}</ul>`);
+    }
 
   const finalPath = path.join(__dirname, '../Resources', `final_resume_${uuidv4()}.html`);
   fs.writeFileSync(finalPath, $new.html(), 'utf8');
@@ -196,4 +234,11 @@ function rawHtmlToFinal(resumeAIFilePath) {
   return finalPath;
 }
 
-module.exports = { rawHtmlToFinal };
+// const filename = path.join(__dirname, `../ResumeFormat.html`);
+// console.log("Final HTML File Path:", filename);
+// rawHtmlToFinal(filename); // Example usage, replace with actual path`);
+
+module.exports = {
+  rawHtmlToFinal,
+}
+

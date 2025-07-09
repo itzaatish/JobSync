@@ -17,8 +17,8 @@ const getApplications = async (req, res) => {
             applications,
         });
     } catch (error) {
-        console.error("Error retrieving applications:", error);
-        res.status(500).json({ error: "Server error while retrieving applications." });
+        // console.error("Error retrieving applications:", error);
+        res.status(500).json({ error: `Server error while retrieving applications. ${error}` });
     }
 }
 module.exports = { getApplications };

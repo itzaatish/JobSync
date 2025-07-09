@@ -28,8 +28,8 @@ const deleteApplication = async (req, res) => {
     });
 
   } catch (error) {
-        console.error(`Error occurred during deletion:`, error);
-        return res.status(500).json({ error: "Server error. Deletion failed." });
+        // console.error(`Error occurred during deletion:`, error);
+        return res.status(500).json({ error: `Server error. Deletion failed. ${error} ` });
   }
 };
 
@@ -63,8 +63,8 @@ const updateApplicationStatus = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(`Error occurred during status update:`, error);
-    return res.status(500).json({ error: "Server error. Status update failed." });
+    // console.error(`Error occurred during status update:`, error);
+    return res.status(500).json({ error: `Server error. Status update failed. ${error}` });
   }
 }
 
@@ -98,8 +98,8 @@ const updateApplicationNote = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(`Error occurred during note update:`, error);
-    return res.status(500).json({ error: "Server error. Note update failed." });
+    // console.error(`Error occurred during note update:`, error);
+    return res.status(500).json({ error: `Server error. Note update failed. ${error}` });
   }
 }
 

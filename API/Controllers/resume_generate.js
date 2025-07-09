@@ -74,9 +74,17 @@ const ResumeParsing = async (resumeRaw , description) => {
     - Must be a single short paragraph targeting the Job Description (45-50 words max).
 
     📌 EDUCATION:
-    - Each entry must be inside <div class="entry">
-    - Include: degree, institution (in <h3>), date (within <span>), and GPA if present.
-    - Use consistent formatting: GPA: 8.16 | Date: Nov. 2022 – May 2026
+    1. Wrap the entire section in <section id="resume-education">.
+    2. Each education entry must be enclosed in a <div class="entry">.
+    3. Inside each .entry, include:
+      - A <h3> tag containing the **degree and institution** joined by an en dash '–'.  
+        Example (just for structure): 'Bachelor of Technology – NIT Agartala'
+      - A <span> tag containing:
+        - If GPA is present: a string with 'GPA: <value> | <date range>'  
+          (Example only: "GPA: 8.16 | Nov. 2022 – May 2026")
+        - If GPA is not present: just the date range  
+          (Example only: "2019 – 2021")
+    4. The <span> content must include GPA and date in a single string separated by '|' (pipe), if both exist.
 
     📌 EXPERIENCE:
     - Each entry must be inside <div class="entry">
@@ -165,7 +173,7 @@ const ResumeParsing = async (resumeRaw , description) => {
     }
     
   } catch (err) {
-    console.error("❌ Error generating response:", err.message);
+    // console.error("❌ Error generating response:", err.message);
     throw new Error("Error generating response from OpenAI API: " + err.message);
   }
 

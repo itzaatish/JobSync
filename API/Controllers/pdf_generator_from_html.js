@@ -36,7 +36,7 @@ const pdfGeneratorFromHtml = async (designHtmlPath) => {
 
   } catch (error) {
     if (browser) await browser.close();
-    throw new Error(`PDF generation failed: ${error.message}`);
+    throw new Error(`PDF generation failed: ${error}`);
   }
 };
 

@@ -25,8 +25,8 @@ const getSingleApplication = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error retrieving application:", error);
-        return res.status(500).json({ error: "Server error while retrieving application." });
+        // console.error("Error retrieving application:", error);
+        return res.status(500).json({ error: `Server error while retrieving application. ${error}` });
     }
 }
 

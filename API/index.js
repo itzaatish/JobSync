@@ -3,7 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const router = require("./Routes/Router");
 const bodyParser = require("body-parser");
 const cors = require('cors');
-
+require('dotenv').config();
 const db = new PrismaClient();
 const App = express();
 

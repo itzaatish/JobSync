@@ -41,8 +41,8 @@ const createNewApplication = async (req, res) => {
             newApplication,
         });
     }catch (error) {
-        console.error("Error creating new application:", error);
-        res.status(500).json({ error: "Server error while creating application." });
+        // console.error("Error creating new application:", error);
+        res.status(500).json({ error: `Server error while creating application. ${error}` });
     }
 }
 
