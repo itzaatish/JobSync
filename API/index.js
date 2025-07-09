@@ -9,7 +9,7 @@ const App = express();
 
 // App.use(cors({origin : 'http://localhost:5173'}))
 App.use(cors({
-  origin: 'https://job-sync-j37u7pmec-itzaatishs-projects.vercel.app/',
+  origin: 'https://job-sync-j37u7pmec-itzaatishs-projects.vercel.app',
   credentials: true, // Optional: if you're sending cookies or headers
 }));
 App.use(bodyParser.json());
