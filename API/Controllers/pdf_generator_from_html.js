@@ -17,6 +17,7 @@ const pdfGeneratorFromHtml = async (designHtmlPath) => {
     }
     fs.unlinkSync(designHtmlPath);
 
+    console.log(process.env.PUPPETEER_EXECUTABLE_PATH);
     browser = await puppeteer.launch({
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
       headless: true,
