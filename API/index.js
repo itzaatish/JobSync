@@ -13,12 +13,13 @@ const App = express();
 //   credentials: true, // Optional: if you're sending cookies or headers
 // }));
 const corsOptions = {
-  origin: 'https://job-sync-j37u7pmec-itzaatishs-projects.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  origin: process.env.FRONTEND_API ,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS' ,'PATCH'],
   credentials: true,
 };
 App.use(cors(corsOptions));
 App.options('/upload', cors(corsOptions));
+
 App.use(bodyParser.json());
 App.use('/', router);
 

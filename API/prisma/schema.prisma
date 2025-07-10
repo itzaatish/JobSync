@@ -25,7 +25,7 @@ model Application_infos {
   status            Application_status @default(APPLIED)
   application_date  DateTime
   creation_date     DateTime           @default(now())
-  personal_note     String? 
+  personal_note     String?
   user              users_info         @relation("UserApplication", fields: [user_id], references: [user_id])
 }
 

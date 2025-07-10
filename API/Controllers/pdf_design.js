@@ -158,7 +158,7 @@ function rawHtmlToFinal(resumeAIFilePath) {
     ) return;
 
     const section = $new(`<section id="${id}"></section>`);
-    console.log(`Appending section: ${id} with title: ${title}`);
+    // console.log(`Appending section: ${id} with title: ${title}`);
     section.append(`<h2 class="${className}">${title}</h2>`);
     section.append(content);
     body.append(section);
@@ -176,7 +176,7 @@ function rawHtmlToFinal(resumeAIFilePath) {
   header.append(contact);
   body.append(header);
 
-  appendSection('resume-objective', 'Objective', `<div>${resumeData.objective}</div>`);
+  // appendSection('resume-objective', 'Objective', `<div>${resumeData.objective}</div>`);
 
   const eduHTML = resumeData.education.map(e => `
     <div class="entry">

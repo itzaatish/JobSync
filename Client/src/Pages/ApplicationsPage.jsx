@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Container,
@@ -20,6 +21,7 @@ const ApplicationsPage = () => {
   const [sortBy, setSortBy] = useState("Newest");
   const { setLoading } = useContext(LoadingContext);
   const BaseURL = import.meta.env.VITE_APP_BASE_URL;
+  const navigate = useNavigate();
 
   const fetchApplications = async () => {
     try {
@@ -107,7 +109,7 @@ const ApplicationsPage = () => {
     }
 
     // Navigate to application details page
-    window.location.href = `/application/${applicationId}`;
+    navigate(`/application/${applicationId}`);
   };
 
   return (
