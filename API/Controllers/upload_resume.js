@@ -41,7 +41,7 @@ const uploadResume = async (req, res) => {
       resumePathAI = await ResumeParsing(resumeFilePath, descriptionFilePath);
       // console.log('✅ Resume generated from OpenAI API:');
     }catch (error) {
-      // console.error(error);
+      console.error('❌ Error generating resume from OpenAI API:', error);
       return res.status(500).json({
         error: `Error generating resume from OpenAI API. ${error}`
       });
@@ -53,7 +53,7 @@ const uploadResume = async (req, res) => {
       resumePathDesign = rawHtmlToFinal(resumePathAI);
       // console.log('✅ Resume designed successfully.');
     }catch(err){
-      // console.error('❌ Error in designing the resume:', err);
+      console.error('❌ Error in designing the resume:', err);
       return res.status(500).json({
         error: `Error designing the resume. ${err}`
       });
@@ -65,7 +65,7 @@ const uploadResume = async (req, res) => {
       // Save the PDF to disk
 
     }catch (err) {
-      // console.error('❌ Error in generating PDF:', err);
+      console.error('❌ Error in generating PDF:', err);
       return res.status(500).json({
         error: `Error generating PDF from HTML. : ${err}`
       });
@@ -77,7 +77,7 @@ const uploadResume = async (req, res) => {
     return ;
 
   } catch (error) {
-    // console.error('❌ Upload error:', error);
+    console.error('❌ Upload error:', error);
     return res.status(500).json({
        error: `Server error while processing upload. ${error}`
     });

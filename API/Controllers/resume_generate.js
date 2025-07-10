@@ -27,6 +27,7 @@ const ResumeParsing = async (resumeRaw , description) => {
         fs.unlinkSync(resumeRaw); // Delete the raw resume file after reading
         fs.unlinkSync(description); // Delete the job description file after reading
     }else{
+        console.error("❌ Resume or job description file not found.");
         throw new Error("Resume or job description file not found While Parsing Through OpenAI api.");
     }
     const messages = [
@@ -146,6 +147,7 @@ const ResumeParsing = async (resumeRaw , description) => {
 
     // Check for error
     if (isUnexpected(response)) {
+      console.error("❌ Error from OpenAI API:", response.body.error);
       throw response.body.error;
     }
 
@@ -169,11 +171,12 @@ const ResumeParsing = async (resumeRaw , description) => {
       resumeFilePath = path.join(__dirname, '../Resources', resumeFileName);
       fs.writeFileSync(resumeFilePath, output, 'utf8');
     }catch (err) {
+      console.error("❌ Error writing the AI generated resume to file:", err.message);
       throw new Error("Error writing the AI generated resume to file: " + err.message);
     }
     
   } catch (err) {
-    // console.error("❌ Error generating response:", err.message);
+    console.error("❌ Error generating response:", err.message);
     throw new Error("Error generating response from OpenAI API: " + err.message);
   }
 
