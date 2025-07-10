@@ -13,7 +13,7 @@ const App = express();
 //   credentials: true, // Optional: if you're sending cookies or headers
 // }));
 const corsOptions = {
-  origin: 'https://job-sync-xyz.vercel.app',
+  origin: 'https://job-sync-j37u7pmec-itzaatishs-projects.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
 };
