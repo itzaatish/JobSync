@@ -15,7 +15,11 @@ const pdfGeneratorFromHtml = async (designHtmlPath) => {
     }
     fs.unlinkSync(designHtmlPath);
 
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      executablePath: puppeteer.executablePath(),
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
 
     await page.setContent(html, { waitUntil: 'networkidle0' });
