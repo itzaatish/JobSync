@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const { RawHtmlToFinal } = require('./pdf_design');
+const dotenv = require('dotenv');
+dotenv.config();
 
 // This function generates a PDF from a raw HTML file.
 // This function takes as input the file path of the final Designed HTML file , which is generated rawtoFinalHtml function .
@@ -16,7 +18,7 @@ const pdfGeneratorFromHtml = async (designHtmlPath) => {
     fs.unlinkSync(designHtmlPath);
 
     browser = await puppeteer.launch({
-      executablePath: puppeteer.executablePath(),
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
