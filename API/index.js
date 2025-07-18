@@ -12,6 +12,7 @@ const App = express();
 //   origin: 'https://job-sync-j37u7pmec-itzaatishs-projects.vercel.app',
 //   credentials: true, // Optional: if you're sending cookies or headers
 // }));
+console.log(process.env.FRONTEND_API);  
 const corsOptions = {
   origin: process.env.FRONTEND_API ,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS' ,'PATCH'],

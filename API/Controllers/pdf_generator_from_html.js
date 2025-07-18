@@ -18,11 +18,12 @@ const pdfGeneratorFromHtml = async (designHtmlPath) => {
     fs.unlinkSync(designHtmlPath);
 
     // console.log(process.env.PUPPETEER_EXECUTABLE_PATH);
+
     const browser = await puppeteer.launch({
-      executablePath: '/usr/bin/chromium',
-      headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
+    console.log('Puppeteer executable path:', await puppeteer.executablePath());
+
     const page = await browser.newPage();
 
     await page.setContent(html, { waitUntil: 'networkidle0' });
