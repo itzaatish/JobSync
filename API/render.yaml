@@ -1,11 +1,10 @@
 services:
-  # This should be 'web' for a web server or 'worker' for a background job
-  - type: web 
+  - type: web
     name: JobSyncAPI
     env: node
-    # Set back to your standard build command
-    buildCommand: "npm install"
+    # Temporarily add 'ls -la /usr/bin' to find the browser executable
+    buildCommand: "npm install && ls -la /usr/bin"
     startCommand: "node index.js"
     systemDependencies:
-      - name: chromium
+      - name: chromium-browser 
         type: apt
