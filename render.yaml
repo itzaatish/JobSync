@@ -1,0 +1,11 @@
+---
+services:
+  - type: web
+    name: JobSyncAPI
+    env: node
+    rootDir: API
+    buildCommand: npm install && ls -la /usr/bin
+    startCommand: node index.js
+    systemDependencies:
+      - name: chromium-browser
+        type: apt
