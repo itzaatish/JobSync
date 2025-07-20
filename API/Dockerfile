@@ -5,11 +5,15 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 WORKDIR /usr/src/app
 
+# Give permissions to work with files (especially for uploads)
+RUN mkdir -p /usr/src/app/uploads && chmod -R 777 /usr/src/app/uploads
+
 COPY package*.json ./
 RUN npm ci
 
-COPY prisma ./prisma
-RUN npx prisma generate
-
 COPY . .
+
+# Optional: ensure script has execution rights
+RUN chmod -R 777 .
+
 CMD ["node", "index.js"]
