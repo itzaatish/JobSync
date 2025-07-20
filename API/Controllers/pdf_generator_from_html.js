@@ -17,8 +17,13 @@ const pdfGeneratorFromHtml = async (designHtmlPath) => {
     }
     fs.unlinkSync(designHtmlPath);
 
-    // console.log(process.env.PUPPETEER_EXECUTABLE_PATH);
-    browser = await puppeteer.launch();
+    const executablePath = puppeteer.executablePath()
+    console.log(executablePath, " executablePath");
+    const browser = await puppeteer.launch({
+      headless: true,
+      executablePath: executablePath, // explicitly pass it
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
 
     await page.setContent(html, { waitUntil: 'networkidle0' });
